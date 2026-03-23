@@ -1,20 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>InventoryApp Demo</title>
+  <title>InventoryApp Web UI</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    h1 { color: #333; }
+    .section { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #ccc; }
+    input { margin: 5px; padding: 6px; width: 250px; }
+    button { padding: 8px 14px; margin-top: 10px; cursor: pointer; }
+    pre { background: #f4f4f4; padding: 15px; border-radius: 5px; }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>InventoryApp Demo</h1>
-  </header>
-  <!-- trigger s3 deploy using proper bucket -->
-  <main>
-    <p>Hello world! This is my S3-hosted demo page for the InventoryApp project.</p>
-  </main>
 
-  <footer>
-    <p>&copy; 2026 InventoryApp</p>
-  </footer>
+<h1>InventoryApp Web UI</h1>
+
+<script>
+  const BASE_URL = "https://467cu18ekg.execute-api.us-east-1.amazonaws.com/dev";
+
+  async function viewInventory() {
+    try {
+      const res = await fetch(`${BASE_URL}/item`);
+      const data = await res.json();
+      document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+      document.getElementById("output").textContent = "Error loading inventory.";
+    }
+  }
+
+  async function addItem() {
+    const item = {
+      item_name: document.getElementById("add-name").value,
+      item_qty_on_hand: document.getElementById("add-quantity").value,
+      item_price: document.getElementById("add-price").value,
+      item_description: document.getElementById("add-description").value,
+      item_location_id: document.getElementById("add-location").value
+    };
+
+    try {
+      const res = await fetch(`${BASE_URL}/item`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(item)
+      });
+
+      const data = await res.json();
+      document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+      document.getElementById("output").textContent = "Error adding item.";
+    }
+  }
+
+  async function deleteItem() {
+    const id = document.getElementById("delete-id").value;
+
+    try {
+      const res = await fetch(`${BASE_URL}/item/${id}`, {
+        method: "DELETE"
+      });
+
+      const data = await res.json();
+      document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+      document.getElementById("output").textContent = "Error deleting item.";
+    }
+  }
+</script>
+
+<div class="section">
+  <h2>View Inventory</h2>
+  <button onclick="viewInventory()">Load Inventory</button>
+</div>
+
+<div class="section">
+  <h2>Add New Item</h2>
+  <input id="add-name" placeholder="Item Name"><br>
+  <input id="add-quantity" placeholder="Quantity On Hand"><br>
+  <input id="add-price" placeholder="Price"><br>
+  <input id="add-description" placeholder="Description"><br>
+  <input id="add-location" placeholder="Location ID"><br>
+  <button onclick="addItem()">Add Item</button>
+</div>
+
+<div class="section">
+  <h2>Delete Item</h2>
+  <input id="delete-id" placeholder="Item ID"><br>
+  <button onclick="deleteItem()">Delete Item</button>
+</div>
+
+<h2>Output</h2>
+<pre id="output"></pre>
+
 </body>
 </html>
