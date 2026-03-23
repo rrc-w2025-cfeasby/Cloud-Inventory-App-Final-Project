@@ -12,7 +12,6 @@ def lambda_handler(event, context):
     item_id = event['pathParameters']['id']
 
     try:
-        # Query to get the full key (PK + SK)
         response = table.query(
             KeyConditionExpression=Key('item_id').eq(item_id)
         )
@@ -21,12 +20,16 @@ def lambda_handler(event, context):
         if not items:
             return {
                 'statusCode': 404,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+                    'Access-Control-Allow-Methods': 'GET,OPTIONS,POST,DELETE'
+                },
                 'body': json.dumps("Item not found")
             }
 
         item = items[0]
 
-        # Delete using BOTH keys
         table.delete_item(
             Key={
                 'item_id': item['item_id'],
@@ -36,11 +39,21 @@ def lambda_handler(event, context):
 
         return {
             'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+                'Access-Control-Allow-Methods': 'GET,OPTIONS,POST,DELETE'
+            },
             'body': json.dumps("Item deleted")
         }
 
     except Exception as e:
         return {
             'statusCode': 500,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+                'Access-Control-Allow-Methods': 'GET,OPTIONS,POST,DELETE'
+            },
             'body': json.dumps(str(e))
         }
