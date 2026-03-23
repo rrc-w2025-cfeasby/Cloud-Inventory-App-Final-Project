@@ -2,6 +2,9 @@ import boto3
 import json
 
 def lambda_handler(event, context):
+    """
+    Get All Inventory Items - GET
+    """
     dynamo = boto3.resource('dynamodb')
     table = dynamo.Table('Inventory')
 

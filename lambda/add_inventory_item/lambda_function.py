@@ -4,6 +4,9 @@ import uuid
 from decimal import Decimal
 
 def lambda_handler(event, context):
+    """
+    Add Inventory Item - POST
+    """
     dynamo = boto3.resource('dynamodb')
     table = dynamo.Table('Inventory')
 
