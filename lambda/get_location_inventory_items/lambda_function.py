@@ -3,6 +3,9 @@ import json
 from boto3.dynamodb.conditions import Key
 
 def lambda_handler(event, context):
+    """
+    Get Location Inventory Items
+    """
     dynamo = boto3.resource('dynamodb')
     table = dynamo.Table('Inventory')
 
